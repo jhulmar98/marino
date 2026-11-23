@@ -1,0 +1,1826 @@
+
+/* ==========================================
+   PLAN DE OPERACIONES | SAN ISIDRO
+   EDITOR DE RUTAS MUNICIPALES
+   ARCHIVO: index.css
+========================================== */
+
+/* ==========================================
+   COLORES INSTITUCIONALES
+========================================== */
+
+:root {
+  --primary: #650078;
+  --primary-dark: #490057;
+  --navy: #172554;
+  --red: #e11d28;
+  --green: #15803d;
+  --blue: #2563eb;
+  --yellow: #f3b434;
+  --teal: #087e83;
+  --gray: #475467;
+  --background: #edf2f7;
+  --border: #e4e7ec;
+  --text: #1f2937;
+  --muted: #64748b;
+  --white: #ffffff;
+}
+
+/* ==========================================
+   CONFIGURACIÓN GENERAL
+========================================== */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+
+  font-family: Arial, Helvetica, sans-serif;
+  background: var(--background);
+}
+
+button,
+input,
+select {
+  font-family: inherit;
+}
+
+/* ==========================================
+   MAPA PRINCIPAL
+========================================== */
+
+#map {
+  position: absolute;
+  inset: 0;
+
+  z-index: 1;
+
+  width: 100%;
+  height: 100%;
+  height: 100dvh;
+
+  background: #edf2f7;
+}
+
+.leaflet-container {
+  font-family: Arial, Helvetica, sans-serif;
+  background: #edf2f7;
+}
+
+.leaflet-control-zoom {
+  border: none !important;
+  box-shadow: 0 3px 12px #0003 !important;
+}
+
+.leaflet-control-zoom a {
+  color: var(--primary) !important;
+  font-weight: 800;
+}
+
+.leaflet-control-attribution {
+  font-size: 10px !important;
+}
+
+/* ==========================================
+   PANEL DE CONTROL
+========================================== */
+
+.panel {
+  position: absolute;
+  z-index: 1100;
+
+  top: 15px;
+  right: 15px;
+
+  width: 390px;
+  max-height: calc(100dvh - 30px);
+
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  background: #ffffff;
+
+  border: 1px solid #e4e7ec;
+  border-radius: 15px;
+
+  box-shadow:
+    0 5px 25px #0003,
+    0 1px 5px #0001;
+
+  scrollbar-width: thin;
+  scrollbar-color: #c4b5d0 transparent;
+}
+
+.panel::-webkit-scrollbar {
+  width: 7px;
+}
+
+.panel::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.panel::-webkit-scrollbar-thumb {
+  background: #c4b5d0;
+  border-radius: 10px;
+}
+
+/* ==========================================
+   ENCABEZADO DEL PANEL
+========================================== */
+
+.header {
+  background: linear-gradient(
+    120deg,
+    #172554 0%,
+    #42206d 55%,
+    #650078 100%
+  );
+
+  color: #ffffff;
+  padding: 18px;
+}
+
+.header h2 {
+  margin: 0 0 6px;
+
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1.35;
+  letter-spacing: 0.2px;
+}
+
+.header small {
+  display: block;
+
+  font-size: 12px;
+  line-height: 1.5;
+  opacity: 0.9;
+}
+
+/* ==========================================
+   CONTENIDO PRINCIPAL
+========================================== */
+
+.content {
+  padding: 16px;
+}
+
+.section {
+  border-top: 1px solid var(--border);
+
+  margin-top: 16px;
+  padding-top: 15px;
+}
+
+.section-first {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
+
+.section h3 {
+  margin: 0 0 13px;
+
+  color: var(--primary);
+
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.4;
+  letter-spacing: 0.3px;
+}
+
+/* ==========================================
+   CAMPOS DEL FORMULARIO
+========================================== */
+
+.field {
+  min-width: 0;
+  margin-bottom: 13px;
+}
+
+.field label {
+  display: block;
+
+  margin-bottom: 6px;
+
+  color: var(--gray);
+
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+input,
+select {
+  display: block;
+
+  width: 100%;
+  min-width: 0;
+
+  padding: 10px 11px;
+
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+
+  background: #ffffff;
+  color: var(--text);
+
+  font-size: 13px;
+  line-height: 1.4;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+input:focus,
+select:focus {
+  outline: none;
+
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px #65007818;
+}
+
+input::placeholder {
+  color: #98a2b3;
+}
+
+input[type="date"],
+input[type="time"] {
+  min-height: 41px;
+}
+
+select {
+  cursor: pointer;
+}
+
+select optgroup {
+  color: var(--primary);
+  font-weight: 800;
+}
+
+select option {
+  color: var(--text);
+}
+
+/* ==========================================
+   CAMPOS EN FILA
+========================================== */
+
+.row {
+  display: flex;
+  align-items: flex-start;
+
+  gap: 9px;
+}
+
+.row > * {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ==========================================
+   BUSCADOR DE UBICACIONES
+========================================== */
+
+.search {
+  display: flex;
+  align-items: stretch;
+
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.search input {
+  flex: 1;
+  min-width: 0;
+}
+
+.search button {
+  flex: none;
+  min-width: 75px;
+}
+
+/* ==========================================
+   BOTONES GENERALES
+========================================== */
+
+button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 40px;
+  padding: 10px 9px;
+
+  border: none;
+  border-radius: 8px;
+
+  color: #ffffff;
+
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.25;
+  text-align: center;
+
+  cursor: pointer;
+  user-select: none;
+
+  transition:
+    opacity 0.15s ease,
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+button:hover:not(:disabled) {
+  opacity: 0.9;
+  box-shadow: 0 2px 7px #0002;
+}
+
+button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+button:focus-visible {
+  outline: 3px solid #9d64b0;
+  outline-offset: 2px;
+}
+
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* ==========================================
+   COLORES DE BOTONES
+========================================== */
+
+.red {
+  background: var(--red);
+}
+
+.green {
+  background: var(--green);
+}
+
+.blue {
+  background: var(--blue);
+}
+
+.yellow {
+  background: var(--yellow);
+  color: #222222;
+}
+
+.gray {
+  background: var(--gray);
+}
+
+.purple {
+  background: var(--primary);
+}
+
+.teal {
+  background: var(--teal);
+}
+
+.dark {
+  background: #344054;
+}
+
+/* ==========================================
+   ORGANIZACIÓN DE BOTONES
+========================================== */
+
+.buttons {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.buttons button {
+  width: 100%;
+}
+
+.full {
+  grid-column: 1 / -1;
+}
+
+/* ==========================================
+   INFORMACIÓN DEL RECORRIDO
+========================================== */
+
+.stats {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 12px;
+
+  margin: 12px 0;
+  padding: 13px;
+
+  background: #ffffff;
+
+  border: 1px solid var(--border);
+  border-radius: 9px;
+
+  color: var(--gray);
+  font-size: 12px;
+}
+
+.stats > div {
+  flex: 1;
+  min-width: 0;
+}
+
+.stats strong {
+  display: block;
+
+  margin-top: 5px;
+
+  color: var(--primary);
+
+  font-size: 19px;
+  font-weight: 800;
+}
+
+/* ==========================================
+   INDICACIONES
+========================================== */
+
+.hint {
+  display: block;
+
+  margin: 8px 0;
+
+  color: var(--muted);
+
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+/* ==========================================
+   BARRAS DE TAMAÑO
+========================================== */
+
+input[type="range"] {
+  width: 100%;
+  height: 24px;
+
+  padding: 0;
+  border: none;
+
+  background: transparent;
+  accent-color: var(--primary);
+
+  cursor: pointer;
+}
+
+input[type="range"]:focus {
+  box-shadow: none;
+}
+
+.size-indicator {
+  display: inline-block;
+
+  min-width: 25px;
+
+  color: var(--primary);
+
+  font-size: 13px;
+  font-weight: 800;
+  text-align: center;
+}
+
+/* ==========================================
+   CASILLAS DE VERIFICACIÓN
+========================================== */
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  margin: 12px 0;
+
+  color: #344054;
+
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.checkbox-row input[type="checkbox"] {
+  flex: none;
+
+  width: 18px;
+  min-width: 18px;
+  height: 18px;
+
+  margin: 0;
+  padding: 0;
+
+  accent-color: var(--primary);
+  cursor: pointer;
+}
+
+.checkbox-row label {
+  flex: 1;
+  cursor: pointer;
+}
+
+/* ==========================================
+   VISTA PREVIA DE LAS 13 IMÁGENES
+========================================== */
+
+.image-preview {
+  display: flex;
+  flex-direction: column;
+
+  justify-content: center;
+  align-items: center;
+
+  gap: 8px;
+
+  width: 100%;
+  min-height: 160px;
+
+  padding: 14px;
+  margin-bottom: 14px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+
+  background-color: #f8fafc;
+
+  background-image:
+    linear-gradient(
+      45deg,
+      #e5e7eb 25%,
+      transparent 25%
+    ),
+    linear-gradient(
+      -45deg,
+      #e5e7eb 25%,
+      transparent 25%
+    ),
+    linear-gradient(
+      45deg,
+      transparent 75%,
+      #e5e7eb 75%
+    ),
+    linear-gradient(
+      -45deg,
+      transparent 75%,
+      #e5e7eb 75%
+    );
+
+  background-size: 20px 20px;
+
+  background-position:
+    0 0,
+    0 10px,
+    10px -10px,
+    -10px 0;
+}
+
+.image-preview img {
+  display: block;
+
+  width: auto;
+  height: auto;
+
+  max-width: 95%;
+  max-height: 130px;
+
+  object-fit: contain;
+
+  filter: drop-shadow(
+    0 3px 5px #0004
+  );
+}
+
+.image-preview span {
+  display: block;
+
+  max-width: 100%;
+
+  color: var(--gray);
+
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+
+  overflow-wrap: anywhere;
+}
+
+/* ==========================================
+   LISTA DE ELEMENTOS COLOCADOS
+========================================== */
+
+.annotation-list {
+  display: grid;
+  gap: 7px;
+
+  max-height: 300px;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  padding-right: 3px;
+}
+
+.annotation-list:empty::before {
+  content:
+    "Aún no se han colocado elementos en el mapa.";
+
+  display: block;
+
+  padding: 14px;
+
+  border: 1px dashed #cbd5e1;
+  border-radius: 8px;
+
+  background: #f8fafc;
+
+  color: var(--muted);
+
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.annotation-item {
+  display: flex;
+  align-items: center;
+
+  gap: 8px;
+
+  width: 100%;
+  padding: 7px;
+
+  border: 1px solid var(--border);
+  border-radius: 8px;
+
+  background: #ffffff;
+
+  font-size: 12px;
+}
+
+.annotation-item:hover {
+  background: #faf7fc;
+  border-color: #d7b7dd;
+}
+
+.annotation-item img {
+  display: block;
+
+  flex: none;
+
+  width: 38px;
+  height: 38px;
+
+  object-fit: contain;
+  border-radius: 5px;
+}
+
+.annotation-item span {
+  flex: 1;
+  min-width: 0;
+
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+
+  color: var(--text);
+  font-weight: 600;
+}
+
+.annotation-item button {
+  flex: none;
+
+  min-height: 29px;
+  padding: 6px 9px;
+
+  font-size: 11px;
+}
+
+/* ==========================================
+   FLECHAS DE DIRECCIÓN
+========================================== */
+
+.arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 24px;
+  height: 24px;
+
+  background: #dc1420;
+  color: #ffffff;
+
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+
+  font-size: 17px;
+  font-weight: bold;
+  line-height: 1;
+
+  box-shadow: 0 1px 5px #0005;
+
+  pointer-events: none;
+}
+
+/* ==========================================
+   PUNTOS EDITABLES
+========================================== */
+
+.vertex {
+  width: 16px;
+  height: 16px;
+
+  background: #ffffff;
+
+  border: 3px solid #e11d28;
+  border-radius: 50%;
+
+  box-shadow: 0 1px 5px #0005;
+}
+
+/* ==========================================
+   INICIO Y DESTINO
+========================================== */
+
+.endpoint {
+  width: 24px;
+  height: 24px;
+
+  border: 3px solid #ffffff;
+  border-radius: 50%;
+
+  box-shadow: 0 2px 6px #0006;
+}
+
+.start {
+  background: #16a34a;
+}
+
+.end {
+  background: #650078;
+}
+
+.leaflet-tooltip {
+  background: #ffffff;
+  color: #1f2937;
+
+  padding: 5px 9px;
+
+  border: 2px solid var(--primary);
+  border-radius: 7px;
+
+  font-family: Arial, sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+
+  box-shadow: 0 2px 6px #0003;
+}
+
+/* ==========================================
+   MARCADORES OPERATIVOS
+========================================== */
+
+.operation-marker {
+  background: transparent !important;
+  border: none !important;
+
+  overflow: visible !important;
+
+  cursor: grab !important;
+}
+
+.operation-marker:active {
+  cursor: grabbing !important;
+}
+
+.map-tag {
+  position: relative;
+
+  width: 0;
+  height: 0;
+
+  overflow: visible;
+  pointer-events: auto;
+}
+
+/* ==========================================
+   IMÁGENES SOBRE EL MAPA
+
+   Compatible con:
+   GAES, Serenazgo, Brigadistas,
+   Tránsito, Personal GRD, vehículos,
+   rescate, ciclistas, motociclistas,
+   cámaras, drones, carpas y estrados.
+========================================== */
+
+.map-image {
+  position: absolute;
+
+  left: 0;
+  bottom: 6px;
+
+  transform: translateX(-50%);
+
+  display: block;
+
+  width: auto;
+  height: auto;
+
+  max-width: none;
+  max-height: none;
+
+  object-fit: contain;
+
+  user-select: none;
+  -webkit-user-drag: none;
+
+  pointer-events: auto;
+
+  filter: drop-shadow(
+    0 3px 4px #0007
+  );
+
+  cursor: grab;
+}
+
+.map-image:active {
+  cursor: grabbing;
+}
+
+/* ==========================================
+   ETIQUETAS DE LOS ELEMENTOS
+========================================== */
+
+.map-caption {
+  position: absolute;
+
+  left: 0;
+  top: 8px;
+
+  transform: translateX(-50%);
+
+  display: block;
+
+  width: max-content;
+  max-width: 300px;
+
+  padding: 5px 9px;
+
+  background: #ffffff;
+  color: #111827;
+
+  border: 2px solid var(--primary);
+  border-radius: 7px;
+
+  font-family: Arial, sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+
+  line-height: 1.25;
+  text-align: center;
+
+  white-space: normal;
+  overflow-wrap: anywhere;
+
+  box-shadow: 0 2px 6px #0004;
+
+  user-select: none;
+  pointer-events: auto;
+
+  cursor: grab;
+}
+
+.map-caption small {
+  display: block;
+
+  margin-top: 4px;
+
+  color: #9a3412;
+
+  font-size: 11px;
+  font-weight: 800;
+}
+
+/* ==========================================
+   CALLES - AMARILLO
+========================================== */
+
+.map-caption.street {
+  top: 0;
+
+  transform: translate(
+    -50%,
+    -50%
+  );
+
+  max-width: 360px;
+
+  padding: 7px 12px;
+
+  background: #fff0a0;
+  color: #191919;
+
+  border: 2px solid #dda800;
+  border-radius: 8px;
+
+  font-weight: 900;
+  text-align: center;
+
+  text-shadow: 0 1px 0 #ffffff80;
+
+  box-shadow: 0 2px 7px #0004;
+}
+
+.map-caption.street small {
+  color: #854d0e;
+}
+
+/* ==========================================
+   AVENIDAS - AZUL
+========================================== */
+
+.map-caption.via {
+  top: 0;
+
+  transform: translate(
+    -50%,
+    -50%
+  );
+
+  max-width: 380px;
+
+  padding: 8px 13px;
+
+  background: #1d4ed8;
+  color: #ffffff;
+
+  border: 2px solid #ffffff;
+  border-radius: 8px;
+
+  font-weight: 900;
+  text-align: center;
+
+  text-shadow: 0 1px 2px #0005;
+
+  box-shadow:
+    0 3px 9px #0005,
+    inset 0 0 0 1px #ffffff40;
+}
+
+.map-caption.via small {
+  color: #ffffff;
+  font-weight: 800;
+}
+
+/* ==========================================
+   PUNTO DE ANOTACIÓN
+========================================== */
+
+.map-dot {
+  position: absolute;
+
+  left: -7px;
+  top: -7px;
+
+  width: 14px;
+  height: 14px;
+
+  background: var(--primary);
+
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+
+  box-shadow: 0 1px 4px #0005;
+}
+
+/* ==========================================
+   CURSORES DEL MAPA
+========================================== */
+
+.leaflet-container.mode-draw,
+.leaflet-container.mode-place {
+  cursor: crosshair !important;
+}
+
+.leaflet-container.mode-draw
+.leaflet-interactive {
+  cursor: crosshair;
+}
+
+.leaflet-marker-draggable {
+  cursor: grab;
+}
+
+.leaflet-marker-draggable:active {
+  cursor: grabbing;
+}
+
+/* ==========================================
+   LEYENDA OPERATIVA SOBRE EL MAPA
+
+   Siempre en esquina inferior izquierda.
+========================================== */
+
+.map-legend {
+  position: absolute;
+  z-index: 900;
+
+  left: 16px;
+  bottom: 30px;
+
+  width: 305px;
+  max-width: calc(100vw - 32px);
+  max-height: calc(100dvh - 60px);
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  padding: 13px;
+
+  background: rgba(
+    255,
+    255,
+    255,
+    0.97
+  );
+
+  border: 1px solid #d0d5dd;
+  border-radius: 11px;
+
+  box-shadow:
+    0 4px 16px #0003,
+    0 1px 4px #0002;
+
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+
+  pointer-events: none;
+
+  scrollbar-width: thin;
+}
+
+.map-legend[hidden] {
+  display: none !important;
+}
+
+/* ==========================================
+   TÍTULO DE LEYENDA
+========================================== */
+
+.legend-title {
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+
+  border-bottom: 2px solid #e9d5f0;
+
+  color: var(--primary);
+
+  font-size: 13px;
+  font-weight: 900;
+  line-height: 1.4;
+
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+
+  overflow-wrap: anywhere;
+}
+
+/* ==========================================
+   FILAS DE LEYENDA
+========================================== */
+
+.legend-row {
+  display: flex;
+  align-items: center;
+
+  gap: 8px;
+  min-height: 29px;
+
+  padding: 3px 0;
+
+  color: #1f2937;
+
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.legend-row + .legend-row {
+  border-top: 1px solid #f2f4f7;
+}
+
+/* ==========================================
+   ICONOS EN LEYENDA
+========================================== */
+
+.legend-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex: none;
+
+  width: 31px;
+  height: 27px;
+}
+
+.legend-icon img {
+  display: block;
+
+  width: auto;
+  height: auto;
+
+  max-width: 30px;
+  max-height: 26px;
+
+  object-fit: contain;
+}
+
+.legend-symbol {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 26px;
+  height: 26px;
+
+  color: var(--primary);
+
+  font-size: 17px;
+  font-weight: 800;
+}
+
+/* ==========================================
+   SÍMBOLO DE RUTA
+========================================== */
+
+.legend-line {
+  width: 28px;
+  height: 5px;
+
+  background: #e2192b;
+
+  border: 1px solid #ffffff;
+  border-radius: 5px;
+
+  box-shadow: 0 1px 3px #0002;
+}
+
+/* ==========================================
+   DESCRIPCIÓN DE LEYENDA
+========================================== */
+
+.legend-label {
+  flex: 1;
+  min-width: 0;
+
+  color: #344054;
+
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.4;
+
+  overflow-wrap: anywhere;
+}
+
+/* ==========================================
+   NÚMERO EDITABLE DE LEYENDA
+========================================== */
+
+.legend-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  flex: none;
+
+  min-width: 27px;
+  min-height: 24px;
+
+  padding: 3px 7px;
+
+  background: #f3e8ff;
+  color: var(--primary);
+
+  border-radius: 6px;
+
+  font-size: 12px;
+  font-weight: 900;
+
+  font-variant-numeric: tabular-nums;
+}
+
+/* ==========================================
+   TOTAL DE LEYENDA
+========================================== */
+
+.legend-total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 10px;
+
+  margin-top: 9px;
+  padding-top: 10px;
+
+  border-top: 2px solid #e4e7ec;
+
+  color: var(--primary);
+
+  font-size: 12px;
+  font-weight: 900;
+  line-height: 1.4;
+}
+
+.legend-total span:first-child {
+  flex: 1;
+  min-width: 0;
+
+  overflow-wrap: anywhere;
+}
+
+.legend-total span:last-child {
+  flex: none;
+
+  font-size: 16px;
+  font-weight: 900;
+
+  font-variant-numeric: tabular-nums;
+}
+
+/* ==========================================
+   EDITOR MANUAL DE LEYENDA
+
+   3 columnas:
+   imagen | descripción | cantidad
+========================================== */
+
+.legend-editor {
+  display: grid;
+  gap: 0;
+
+  width: 100%;
+  max-height: 450px;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  padding: 5px;
+
+  border: 1px solid #d0d5dd;
+  border-radius: 10px;
+
+  background: #f8fafc;
+
+  scrollbar-width: thin;
+  scrollbar-color: #c4b5d0 transparent;
+}
+
+.legend-editor::-webkit-scrollbar {
+  width: 6px;
+}
+
+.legend-editor::-webkit-scrollbar-thumb {
+  background: #c4b5d0;
+  border-radius: 8px;
+}
+
+/* ==========================================
+   ENCABEZADO DE COLUMNAS
+========================================== */
+
+.legend-editor-header {
+  display: grid;
+
+  grid-template-columns:
+    45px
+    minmax(0, 1fr)
+    78px;
+
+  align-items: center;
+
+  gap: 7px;
+  padding: 10px 5px;
+
+  background: var(--primary);
+  color: #ffffff;
+
+  border-radius: 6px 6px 0 0;
+
+  font-size: 9px;
+  font-weight: 900;
+
+  letter-spacing: 0.2px;
+  text-align: center;
+}
+
+.legend-editor-header span:nth-child(2) {
+  text-align: left;
+}
+
+/* ==========================================
+   FILAS DE LAS 13 IMÁGENES
+========================================== */
+
+.legend-edit-row {
+  display: grid;
+
+  grid-template-columns:
+    45px
+    minmax(0, 1fr)
+    78px;
+
+  align-items: center;
+
+  gap: 7px;
+  min-height: 54px;
+
+  padding: 7px 5px;
+
+  background: #ffffff;
+
+  border-bottom: 1px solid #e4e7ec;
+
+  transition: background 0.15s ease;
+}
+
+.legend-edit-row:nth-child(odd) {
+  background: #faf7fc;
+}
+
+.legend-edit-row:hover {
+  background: #f3e8ff;
+}
+
+.legend-edit-row:last-child {
+  border-bottom: none;
+  border-radius: 0 0 6px 6px;
+}
+
+/* ==========================================
+   IMÁGENES PEQUEÑAS DEL EDITOR
+
+   Mismas reglas para las 13 imágenes.
+========================================== */
+
+.legend-edit-row > img {
+  display: block;
+
+  width: 42px;
+  height: 42px;
+
+  max-width: 100%;
+
+  margin: 0 auto;
+
+  object-fit: contain;
+
+  filter: drop-shadow(
+    0 2px 3px #0003
+  );
+}
+
+/* ==========================================
+   SÍMBOLOS SIN ARCHIVO PNG
+========================================== */
+
+.legend-edit-symbol {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 42px;
+  height: 42px;
+
+  margin: 0 auto;
+
+  font-size: 21px;
+}
+
+/* ==========================================
+   CAMPOS EDITABLES DE LA LEYENDA
+========================================== */
+
+.legend-edit-row input {
+  display: block;
+
+  width: 100%;
+  min-width: 0;
+
+  padding: 9px 8px;
+
+  border: 1px solid #cbd5e1;
+  border-radius: 7px;
+
+  background: #ffffff;
+  color: #1f2937;
+
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.legend-edit-row input:focus {
+  outline: none;
+
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px #65007820;
+}
+
+/* ==========================================
+   NOMBRE DEL ELEMENTO
+========================================== */
+
+.legend-edit-row
+input[data-legend-label] {
+  text-align: left;
+  font-weight: 600;
+}
+
+/* ==========================================
+   CANTIDAD DEL ELEMENTO
+========================================== */
+
+.legend-edit-row
+input[data-legend-count] {
+  padding-left: 4px;
+  padding-right: 4px;
+
+  color: var(--primary);
+
+  font-size: 13px;
+  font-weight: 900;
+
+  text-align: center;
+
+  font-variant-numeric: tabular-nums;
+}
+
+.legend-edit-row
+input[data-legend-count]::placeholder {
+  color: #98a2b3;
+
+  font-size: 10px;
+  font-weight: 500;
+}
+
+/* ==========================================
+   TOTAL MANUAL
+========================================== */
+
+#legendTotalText {
+  font-weight: 700;
+}
+
+#legendTotalNumber {
+  color: var(--primary);
+
+  font-size: 15px;
+  font-weight: 900;
+
+  font-variant-numeric: tabular-nums;
+}
+
+/* ==========================================
+   EXPORTAR PNG
+========================================== */
+
+.png {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  min-height: 52px;
+
+  padding: 15px;
+
+  border: none;
+  border-radius: 9px;
+
+  background: linear-gradient(
+    120deg,
+    #650078,
+    #b117a1
+  );
+
+  color: #ffffff;
+
+  font-size: 14px;
+  font-weight: 900;
+
+  letter-spacing: 0.3px;
+
+  box-shadow: 0 3px 10px #65007833;
+}
+
+.png:hover:not(:disabled) {
+  background: linear-gradient(
+    120deg,
+    #490057,
+    #94118c
+  );
+
+  box-shadow: 0 4px 12px #65007850;
+}
+
+.png:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
+
+/* ==========================================
+   ESTADO DEL SISTEMA
+========================================== */
+
+.status {
+  display: block;
+
+  margin-top: 16px;
+  padding: 13px;
+
+  border-left: 4px solid var(--primary);
+  border-radius: 8px;
+
+  background: #f2f4f7;
+  color: #344054;
+
+  font-size: 12px;
+  line-height: 1.55;
+
+  overflow-wrap: anywhere;
+}
+
+/* ==========================================
+   TABLETS Y PANTALLAS MEDIANAS
+========================================== */
+
+@media (max-width: 950px) {
+
+  .panel {
+    width: 350px;
+  }
+
+  .content {
+    padding: 13px;
+  }
+
+  .header {
+    padding: 14px;
+  }
+
+  .header h2 {
+    font-size: 15px;
+  }
+
+  .map-legend {
+    width: 265px;
+    padding: 11px;
+  }
+
+  .legend-editor-header,
+  .legend-edit-row {
+    grid-template-columns:
+      38px
+      minmax(0, 1fr)
+      70px;
+
+    gap: 5px;
+  }
+
+  .legend-edit-row > img,
+  .legend-edit-symbol {
+    width: 35px;
+    height: 35px;
+  }
+
+}
+
+/* ==========================================
+   TELÉFONOS Y PANTALLAS PEQUEÑAS
+========================================== */
+
+@media (max-width: 600px) {
+
+  .panel {
+    left: 9px;
+    right: 9px;
+    top: 9px;
+
+    width: auto;
+    max-height: 56dvh;
+
+    border-radius: 12px;
+  }
+
+  .header {
+    padding: 12px;
+  }
+
+  .header h2 {
+    font-size: 14px;
+  }
+
+  .header small {
+    font-size: 11px;
+  }
+
+  .content {
+    padding: 11px;
+  }
+
+  .section {
+    margin-top: 12px;
+    padding-top: 12px;
+  }
+
+  .section h3 {
+    font-size: 12px;
+  }
+
+  button {
+    padding: 9px 6px;
+    font-size: 11px;
+  }
+
+  input,
+  select {
+    font-size: 12px;
+  }
+
+  .image-preview {
+    min-height: 120px;
+  }
+
+  .image-preview img {
+    max-height: 95px;
+  }
+
+  .stats strong {
+    font-size: 16px;
+  }
+
+  .annotation-item img {
+    width: 30px;
+    height: 30px;
+  }
+
+  .map-caption {
+    max-width: 210px;
+  }
+
+  .map-caption.street,
+  .map-caption.via {
+    max-width: 240px;
+  }
+
+  /* Leyenda sobre el mapa */
+
+  .map-legend {
+    left: 9px;
+    bottom: 24px;
+
+    width: 235px;
+    max-width: calc(100vw - 18px);
+    max-height: 34dvh;
+
+    padding: 10px;
+
+    border-radius: 9px;
+  }
+
+  .legend-title {
+    font-size: 11px;
+    margin-bottom: 8px;
+  }
+
+  .legend-row {
+    min-height: 27px;
+    gap: 6px;
+  }
+
+  .legend-icon {
+    width: 26px;
+    height: 25px;
+  }
+
+  .legend-icon img {
+    max-width: 25px;
+    max-height: 24px;
+  }
+
+  .legend-label {
+    font-size: 11px;
+  }
+
+  .legend-count {
+    min-width: 24px;
+    min-height: 23px;
+    font-size: 11px;
+  }
+
+  .legend-total {
+    font-size: 11px;
+  }
+
+  .legend-total span:last-child {
+    font-size: 14px;
+  }
+
+  /* Editor manual */
+
+  .legend-editor {
+    max-height: 320px;
+  }
+
+  .legend-editor-header {
+    font-size: 8px;
+  }
+
+  .legend-editor-header,
+  .legend-edit-row {
+    grid-template-columns:
+      35px
+      minmax(0, 1fr)
+      65px;
+
+    gap: 5px;
+  }
+
+  .legend-edit-row {
+    min-height: 48px;
+    padding: 6px 4px;
+  }
+
+  .legend-edit-row > img,
+  .legend-edit-symbol {
+    width: 31px;
+    height: 31px;
+  }
+
+  .legend-edit-row input {
+    padding: 8px 5px;
+    font-size: 10px;
+  }
+
+  .legend-edit-row
+  input[data-legend-count] {
+    font-size: 12px;
+  }
+
+}
+
+/* ==========================================
+   PANTALLAS CON POCA ALTURA
+========================================== */
+
+@media (max-height: 650px) {
+
+  .panel {
+    top: 8px;
+    max-height: calc(100dvh - 16px);
+  }
+
+  .map-legend {
+    max-height: 45dvh;
+  }
+
+}
+
+/* ==========================================
+   ACCESIBILIDAD
+========================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+
+}

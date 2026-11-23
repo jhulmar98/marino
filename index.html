@@ -1,0 +1,1488 @@
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>
+    Plan de Operaciones | San Isidro
+  </title>
+
+  <!-- LEAFLET -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  >
+
+  <!-- CSS DEL PROYECTO -->
+  <link
+    rel="stylesheet"
+    href="./index.css"
+  >
+</head>
+
+<body>
+
+  <!-- ================================= -->
+  <!-- MAPA PRINCIPAL -->
+  <!-- ================================= -->
+
+  <div id="map"></div>
+
+  <!-- ================================= -->
+  <!-- LEYENDA DEL MAPA -->
+  <!-- ================================= -->
+
+  <div
+    id="mapLegend"
+    class="map-legend"
+    hidden
+  ></div>
+
+  <!-- ================================= -->
+  <!-- PANEL PRINCIPAL -->
+  <!-- ================================= -->
+
+  <aside class="panel">
+
+    <header class="header">
+
+      <h2>
+        PLAN DE OPERACIONES | SAN ISIDRO
+      </h2>
+
+      <small>
+        Editor de recorridos y despliegue operativo
+      </small>
+
+    </header>
+
+    <main class="content">
+
+      <!-- ================================= -->
+      <!-- INFORMACIÓN DEL RECORRIDO -->
+      <!-- ================================= -->
+
+      <section class="section section-first">
+
+        <h3>
+          INFORMACIÓN DEL RECORRIDO
+        </h3>
+
+        <div class="field">
+          <label for="superTitle">
+            Texto superior del título
+          </label>
+
+          <input
+            id="superTitle"
+            type="text"
+            value="PLAN DE OPERACIONES | SAN ISIDRO 2026"
+            maxlength="120"
+          >
+        </div>
+
+        <div class="field">
+          <label for="routeTitle">
+            Título principal
+          </label>
+
+          <input
+            id="routeTitle"
+            type="text"
+            value="RECORRIDO DE IDA"
+            maxlength="120"
+          >
+        </div>
+
+        <div class="field">
+          <label for="routeDate">
+            Fecha del recorrido
+          </label>
+
+          <input
+            id="routeDate"
+            type="date"
+            value="2026-11-15"
+          >
+        </div>
+
+        <div class="row">
+
+          <div class="field">
+            <label for="startText">
+              Texto del inicio
+            </label>
+
+            <input
+              id="startText"
+              type="text"
+              value="INICIO"
+              maxlength="80"
+            >
+          </div>
+
+          <div class="field">
+            <label for="endText">
+              Texto del destino
+            </label>
+
+            <input
+              id="endText"
+              type="text"
+              value="DESTINO"
+              maxlength="80"
+            >
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- ================================= -->
+      <!-- BUSCAR UBICACIÓN -->
+      <!-- ================================= -->
+
+      <section class="section">
+
+        <h3>
+          BUSCAR UBICACIÓN
+        </h3>
+
+        <div class="search">
+
+          <input
+            id="searchInput"
+            type="search"
+            placeholder="Buscar avenida, calle o lugar..."
+          >
+
+          <button
+            id="btnSearch"
+            class="dark"
+            type="button"
+          >
+            Buscar
+          </button>
+
+        </div>
+
+      </section>
+
+      <!-- ================================= -->
+      <!-- EDITOR DE RECORRIDO -->
+      <!-- ================================= -->
+
+      <section class="section">
+
+        <h3>
+          EDITOR DEL RECORRIDO
+        </h3>
+
+        <div class="buttons">
+
+          <button
+            id="btnDraw"
+            class="red"
+            type="button"
+          >
+            Dibujar ruta
+          </button>
+
+          <button
+            id="btnFinish"
+            class="green"
+            type="button"
+          >
+            Finalizar
+          </button>
+
+          <button
+            id="btnEdit"
+            class="blue"
+            type="button"
+          >
+            Editar puntos
+          </button>
+
+          <button
+            id="btnUndo"
+            class="yellow"
+            type="button"
+          >
+            Deshacer punto
+          </button>
+
+          <button
+            id="btnFit"
+            class="teal full"
+            type="button"
+          >
+            Centrar ruta y elementos
+          </button>
+
+          <button
+            id="btnClear"
+            class="gray full"
+            type="button"
+          >
+            Borrar toda la ruta
+          </button>
+
+        </div>
+
+        <div class="stats">
+
+          <div>
+            Puntos de ruta
+            <strong id="pointsCount">0</strong>
+          </div>
+
+          <div>
+            Distancia aproximada
+            <strong id="distance">0 m</strong>
+          </div>
+
+        </div>
+
+        <p class="hint">
+          Dibuja tu ruta directamente sobre el mapa.
+          Después podrás modificar cada punto,
+          manteniendo las flechas de dirección.
+        </p>
+
+      </section>
+
+      <!-- ================================= -->
+      <!-- IMÁGENES MUNICIPALES -->
+      <!-- ================================= -->
+
+      <section class="section">
+
+        <h3>
+          IMÁGENES Y SEÑALIZACIÓN OPERATIVA
+        </h3>
+
+        <div class="field">
+
+          <label for="itemType">
+            Seleccionar elemento
+          </label>
+
+          <select id="itemType">
+
+            <!-- PERSONAL OPERATIVO -->
+
+            <optgroup label="Personal operativo">
+
+              <option
+                value="gaes"
+                data-file="gaes.png"
+              >
+                Personal GAES
+              </option>
+
+              <option
+                value="sereno"
+                data-file="sereno.png"
+              >
+                Personal de Serenazgo
+              </option>
+
+              <option
+                value="brigadistas"
+                data-file="brigadistas.png"
+              >
+                Personal de Brigadistas
+              </option>
+
+              <option
+                value="transito"
+                data-file="transito.png"
+              >
+                Personal de Tránsito
+              </option>
+
+              <option
+                value="persona-grd"
+                data-file="persona-grd.png"
+              >
+                Personal de GRD
+              </option>
+
+            </optgroup>
+
+            <!-- VEHÍCULOS Y MOVILIDAD -->
+
+            <optgroup label="Vehículos y movilidad">
+
+              <option
+                value="carro"
+                data-file="carro.png"
+              >
+                Vehículo municipal
+              </option>
+
+              <option
+                value="motociclista"
+                data-file="motociclista.png"
+              >
+                Motociclista
+              </option>
+
+              <option
+                value="ciclista"
+                data-file="ciclista.png"
+              >
+                Ciclista
+              </option>
+
+              <option
+                value="rescate-vehiculo"
+                data-file="rescate-vehiculo.png"
+              >
+                Vehículo de rescate
+              </option>
+
+            </optgroup>
+
+            <!-- EQUIPAMIENTO Y RECURSOS -->
+
+            <optgroup label="Equipamiento y recursos">
+
+              <option
+                value="grd"
+                data-file="grd.png"
+              >
+                Carpa de GRD
+              </option>
+
+              <option
+                value="estrado"
+                data-file="estrado.png"
+              >
+                Estrado municipal
+              </option>
+
+              <option
+                value="camara"
+                data-file="camara.png"
+              >
+                Cámara de vigilancia
+              </option>
+
+              <option
+                value="drones"
+                data-file="drones.png"
+              >
+                Drones
+              </option>
+
+            </optgroup>
+
+            <!-- SEÑALIZACIÓN DE VÍAS -->
+
+            <optgroup label="Identificación de vías">
+
+              <option value="via">
+                Avenida o vía principal (azul)
+              </option>
+
+              <option value="calle">
+                Nombre de calle (amarillo)
+              </option>
+
+            </optgroup>
+
+            <!-- ANOTACIONES -->
+
+            <optgroup label="Anotaciones">
+
+              <option value="hora">
+                Punto con hora estimada
+              </option>
+
+              <option value="texto">
+                Texto libre / módulo municipal
+              </option>
+
+            </optgroup>
+
+          </select>
+
+        </div>
+
+        <!-- VISTA PREVIA -->
+
+        <div
+          id="itemPreview"
+          class="image-preview"
+        >
+
+          <img
+            id="previewImage"
+            src="./gaes.png"
+            alt="Vista previa"
+          >
+
+          <span id="previewFileName">
+            gaes.png
+          </span>
+
+        </div>
+
+        <!-- TEXTO -->
+
+        <div class="field">
+
+          <label for="itemTitle">
+            Nombre del elemento o vía
+          </label>
+
+          <input
+            id="itemTitle"
+            type="text"
+            value="PERSONAL GAES"
+            maxlength="120"
+            placeholder="Nombre o descripción"
+          >
+
+        </div>
+
+        <!-- HORA -->
+
+        <div class="field">
+
+          <label for="itemTime">
+            Hora estimada (opcional)
+          </label>
+
+          <input
+            id="itemTime"
+            type="time"
+          >
+
+        </div>
+
+        <!-- TAMAÑO -->
+
+        <div class="field">
+
+          <label for="itemSize">
+            Tamaño del elemento:
+            <span
+              id="sizeValue"
+              class="size-indicator"
+            >120</span>
+            px
+          </label>
+
+          <input
+            id="itemSize"
+            type="range"
+            min="30"
+            max="360"
+            step="2"
+            value="120"
+          >
+
+        </div>
+
+        <!-- NOMBRE OPCIONAL -->
+
+        <div class="checkbox-row">
+
+          <input
+            id="itemShowTitle"
+            type="checkbox"
+          >
+
+          <label for="itemShowTitle">
+            Mostrar nombre o texto del elemento
+          </label>
+
+        </div>
+
+        <!-- ACCIONES -->
+
+        <div class="buttons">
+
+          <button
+            id="btnPlace"
+            class="purple full"
+            type="button"
+          >
+            Colocar elemento en el mapa
+          </button>
+
+          <button
+            id="btnUpdate"
+            class="green"
+            type="button"
+            disabled
+          >
+            Guardar cambios
+          </button>
+
+          <button
+            id="btnRemoveItem"
+            class="red"
+            type="button"
+            disabled
+          >
+            Eliminar elemento
+          </button>
+
+          <button
+            id="btnCancelItem"
+            class="gray full"
+            type="button"
+            disabled
+          >
+            Cancelar edición
+          </button>
+
+        </div>
+
+        <p class="hint">
+          Coloca y mueve libremente las imágenes
+          municipales. Puedes cambiar su tamaño,
+          texto y hora de forma individual.
+        </p>
+
+      </section>
+
+      <!-- ================================= -->
+      <!-- ELEMENTOS COLOCADOS -->
+      <!-- ================================= -->
+
+      <section class="section">
+
+        <h3>
+          ELEMENTOS COLOCADOS EN EL MAPA
+        </h3>
+
+        <div
+          id="itemList"
+          class="annotation-list"
+        ></div>
+
+      </section>
+
+      <!-- ================================= -->
+      <!-- LEYENDA OPERATIVA EDITABLE -->
+      <!-- ================================= -->
+
+      <section class="section">
+
+        <h3>
+          LEYENDA OPERATIVA EDITABLE
+        </h3>
+
+        <!-- ACTIVAR LEYENDA -->
+
+        <div class="checkbox-row">
+
+          <input
+            id="showLegend"
+            type="checkbox"
+            checked
+          >
+
+          <label for="showLegend">
+            Mostrar leyenda en el mapa
+          </label>
+
+        </div>
+
+        <!-- TÍTULO -->
+
+        <div class="field">
+
+          <label for="legendTitle">
+            Título de la leyenda
+          </label>
+
+          <input
+            id="legendTitle"
+            type="text"
+            value="LEYENDA OPERATIVA"
+            maxlength="100"
+          >
+
+        </div>
+
+        <!-- MOSTRAR CANTIDADES -->
+
+        <div class="checkbox-row">
+
+          <input
+            id="legendShowCounts"
+            type="checkbox"
+            checked
+          >
+
+          <label for="legendShowCounts">
+            Mostrar cantidades por elemento
+          </label>
+
+        </div>
+
+        <p class="hint">
+          Modifica el texto y la cantidad de cada
+          símbolo. Si dejas el número vacío,
+          se utilizará la cantidad real del mapa.
+        </p>
+
+        <!-- ================================= -->
+        <!-- EDITOR DE LEYENDA -->
+        <!-- ================================= -->
+
+        <div
+          id="legendEditor"
+          class="legend-editor"
+        >
+
+          <div class="legend-editor-header">
+
+            <span>IMAGEN</span>
+            <span>DESCRIPCIÓN EDITABLE</span>
+            <span>CANTIDAD</span>
+
+          </div>
+
+          <!-- ================================= -->
+          <!-- GAES -->
+          <!-- ================================= -->
+
+          <div
+            class="legend-edit-row"
+            data-legend-type="gaes"
+          >
+
+            <img
+              src="./gaes.png"
+              alt="GAES"
+            >
+
+            <input
+              type="text"
+              data-legend-label="gaes"
+              value="Personal GAES"
+              aria-label="Descripción GAES"
+            >
+
+            <input
+              type="number"
+              data-legend-count="gaes"
+              min="0"
+              step="1"
+              placeholder="Auto"
+              aria-label="Cantidad GAES"
+            >
+
+          </div>
+
+          <!-- ================================= -->
+          <!-- SERENAZGO -->
+          <!-- ================================= -->
+
+          <div
+            class="legend-edit-row"
+            data-legend-type="sereno"
+          >
+
+            <img
+              src="./sereno.png"
+              alt="Serenazgo"
+            >
+
+            <input
+              type="text"
+              data-legend-label="sereno"
+              value="Personal de Serenazgo"
+              aria-label="Descripción Serenazgo"
+            >
+
+            <input
+              type="number"
+              data-legend-count="sereno"
+              min="0"
+              step="1"
+              placeholder="Auto"
+              aria-label="Cantidad Serenazgo"
+            >
+
+          </div>
+
+          <!-- ================================= -->
+          <!-- BRIGADISTAS -->
+          <!-- ================================= -->
+
+          <div
+            class="legend-edit-row"
+            data-legend-type="brigadistas"
+          >
+
+            <img
+              src="./brigadistas.png"
+              alt="Brigadistas"
+            >
+
+            <input
+              type="text"
+              data-legend-label="brigadistas"
+              value="Personal de Brigadistas"
+              aria-label="Descripción Brigadistas"
+            >
+
+            <input
+              type="number"
+              data-legend-count="brigadistas"
+              min="0"
+              step="1"
+              placeholder="Auto"
+              aria-label="Cantidad Brigadistas"
+            >
+
+          </div>
+
+          <!-- ================================= -->
+          <!-- TRÁNSITO -->
+          <!-- ================================= -->
+
+          <div
+            class="legend-edit-row"
+            data-legend-type="transito"
+          >
+
+            <img
+              src="./transito.png"
+              alt="Tránsito"
+            >
+
+            <input
+              type="text"
+              data-legend-label="transito"
+              value="Personal de Tránsito"
+              aria-label="Descripción Tránsito"
+            >
+
+            <input
+              type="number"
+              data-legend-count="transito"
+              min="0"
+              step="1"
+              placeholder="Auto"
+              aria-label="Cantidad Tránsito"
+            >
+
+          </div>
+
+          <!-- ================================= -->
+          <!-- PERSONAL GRD -->
+          <!-- ================================= -->
+
+          <div
+            class="legend-edit-row"
+            data-legend-type="persona-grd"
+          >
+
+            <img
+              src="./persona-grd.png"
+              alt="Personal de GRD"
+            >
+
+            <input
+              type="text"
+              data-legend-label="persona-grd"
+              value="Personal de GRD"
+              aria-label="Descripción Personal GRD"
+            >
+
+            <input
+              type="number"
+              data-legend-count="persona-grd"
+              min="0"
+              step="1"
+              placeholder="Auto"
+              aria-label="Cantidad Personal GRD"
+            >
+
+          </div>
+
+          <!-- ================================= -->
+          <!-- VEHÍCULOS -->
+          <!-- ================================= -->
+
+          <div
+            class="legend-edit-row"
+            data-legend-type="carro"
+          >
+
+            <img
+              src="./carro.png"
+              alt="Vehículo municipal"
+            >
+
+            <input
+              type="text"
+              data-legend-label="carro"
+              value="Vehículos municipales"
+              aria-label="Descripción Vehículos"
+            >
+
+            <input
+              type="number"
+              data-legend-count="carro"
+              min="0"
+              step="1"
+              placeholder="Auto"
+              aria-label="Cantidad Vehículos"
+            >
+
+          </div>
+
+          <!-- ================================= -->
+          <!-- MOTOCICLISTAS -->
+          <!-- ================================= -->
+
+          <div
+            class="legend-edit-row"
+            data-legend-type="motociclista"
+          >
+
+            <img
+              src="./motociclista.png"
+              alt="Motociclista"
+            >
+
+            <input
+              type="text"
+              data-legend-label="motociclista"
+              value="Motociclistas"
+              aria-label="Descripción Motociclistas"
+            >
+
+            <input
+              type="number"
+              data-legend-count="motociclista"
+              min="0"
+              step="1"
+              placeholder="Auto"
+              aria-label="Cantidad Motociclistas"
+            >
+
+          </div>
+
+          <!-- ================================= -->
+          <!-- CICLISTAS -->
+          <!-- ================================= -->
+
+          <div
+            class="legend-edit-row"
+            data-legend-type="ciclista"
+          >
+
+            <img
+              src="./ciclista.png"
+              alt="Ciclista"
+            >
+
+            <input
+              type="text"
+              data-legend-label="ciclista"
+              value="Ciclistas"
+              aria-label="Descripción Ciclistas"
+            >
+
+            <input
+              type="number"
+              data-legend-count="ciclista"
+              min="0"
+              step="1"
+              placeholder="Auto"
+              aria-label="Cantidad Ciclistas"
+            >
+
+          </div>
+
+          <!-- ================================= -->
+          <!-- VEHÍCULO DE RESCATE -->
+          <!-- ================================= -->
+
+          <div
+            class="legend-edit-row"
+            data-legend-type="rescate-vehiculo"
+          >
+
+            <img
+              src="./rescate-vehiculo.png"
+              alt="Vehículo de rescate"
+            >
+
+            <input
+              type="text"
+              data-legend-label="rescate-vehiculo"
+              value="Vehículos de rescate"
+              aria-label="Descripción Vehículo Rescate"
+            >
+
+            <input
+              type="number"
+              data-legend-count="rescate-vehiculo"
+              min="0"
+              step="1"
+              placeholder="Auto"
+              aria-label="Cantidad Vehículos Rescate"
+            >
+
+          </div>
+
+          <!-- ================================= -->
+          <!-- CARPAS GRD -->
+          <!-- ================================= -->
+
+          <div
+            class="legend-edit-row"
+            data-legend-type="grd"
+          >
+
+            <img
+              src="./grd.png"
+              alt="Carpa de GRD"
+            >
+
+            <input
+              type="text"
+              data-legend-label="grd"
+              value="Carpas de GRD"
+              aria-label="Descripción Carpas GRD"
+            >
+
+            <input
+              type="number"
+              data-legend-count="grd"
+              min="0"
+              step="1"
+              placeholder="Auto"
+              aria-label="Cantidad Carpas GRD"
+            >
+
+          </div>
+
+          <!-- ================================= -->
+          <!-- ESTRADO -->
+          <!-- ================================= -->
+
+          <div
+            class="legend-edit-row"
+            data-legend-type="estrado"
+          >
+
+            <img
+              src="./estrado.png"
+              alt="Estrado municipal"
+            >
+
+            <input
+              type="text"
+              data-legend-label="estrado"
+              value="Estrado municipal"
+              aria-label="Descripción Estrado"
+            >
+
+            <input
+              type="number"
+              data-legend-count="estrado"
+              min="0"
+              step="1"
+              placeholder="Auto"
+              aria-label="Cantidad Estrados"
+            >
+
+          </div>
+
+          <!-- ================================= -->
+          <!-- CÁMARAS -->
+          <!-- ================================= -->
+
+          <div
+            class="legend-edit-row"
+            data-legend-type="camara"
+          >
+
+            <img
+              src="./camara.png"
+              alt="Cámara de vigilancia"
+            >
+
+            <input
+              type="text"
+              data-legend-label="camara"
+              value="Cámaras de vigilancia"
+              aria-label="Descripción Cámaras"
+            >
+
+            <input
+              type="number"
+              data-legend-count="camara"
+              min="0"
+              step="1"
+              placeholder="Auto"
+              aria-label="Cantidad Cámaras"
+            >
+
+          </div>
+
+          <!-- ================================= -->
+          <!-- DRONES -->
+          <!-- ================================= -->
+
+          <div
+            class="legend-edit-row"
+            data-legend-type="drones"
+          >
+
+            <img
+              src="./drones.png"
+              alt="Drones"
+            >
+
+            <input
+              type="text"
+              data-legend-label="drones"
+              value="Drones de vigilancia"
+              aria-label="Descripción Drones"
+            >
+
+            <input
+              type="number"
+              data-legend-count="drones"
+              min="0"
+              step="1"
+              placeholder="Auto"
+              aria-label="Cantidad Drones"
+            >
+
+          </div>
+
+          <!-- ================================= -->
+          <!-- AVENIDAS -->
+          <!-- ================================= -->
+
+          <div
+            class="legend-edit-row"
+            data-legend-type="via"
+          >
+
+            <span class="legend-edit-symbol">
+              🛣️
+            </span>
+
+            <input
+              type="text"
+              data-legend-label="via"
+              value="Avenidas señalizadas"
+              aria-label="Descripción Avenidas"
+            >
+
+            <input
+              type="number"
+              data-legend-count="via"
+              min="0"
+              step="1"
+              placeholder="Auto"
+              aria-label="Cantidad Avenidas"
+            >
+
+          </div>
+
+          <!-- ================================= -->
+          <!-- CALLES -->
+          <!-- ================================= -->
+
+          <div
+            class="legend-edit-row"
+            data-legend-type="calle"
+          >
+
+            <span class="legend-edit-symbol">
+              📍
+            </span>
+
+            <input
+              type="text"
+              data-legend-label="calle"
+              value="Calles señalizadas"
+              aria-label="Descripción Calles"
+            >
+
+            <input
+              type="number"
+              data-legend-count="calle"
+              min="0"
+              step="1"
+              placeholder="Auto"
+              aria-label="Cantidad Calles"
+            >
+
+          </div>
+
+          <!-- ================================= -->
+          <!-- HORAS -->
+          <!-- ================================= -->
+
+          <div
+            class="legend-edit-row"
+            data-legend-type="hora"
+          >
+
+            <span class="legend-edit-symbol">
+              🕒
+            </span>
+
+            <input
+              type="text"
+              data-legend-label="hora"
+              value="Puntos con hora"
+              aria-label="Descripción Horarios"
+            >
+
+            <input
+              type="number"
+              data-legend-count="hora"
+              min="0"
+              step="1"
+              placeholder="Auto"
+              aria-label="Cantidad Horarios"
+            >
+
+          </div>
+
+          <!-- ================================= -->
+          <!-- ANOTACIONES -->
+          <!-- ================================= -->
+
+          <div
+            class="legend-edit-row"
+            data-legend-type="texto"
+          >
+
+            <span class="legend-edit-symbol">
+              📋
+            </span>
+
+            <input
+              type="text"
+              data-legend-label="texto"
+              value="Módulos / anotaciones"
+              aria-label="Descripción Anotaciones"
+            >
+
+            <input
+              type="number"
+              data-legend-count="texto"
+              min="0"
+              step="1"
+              placeholder="Auto"
+              aria-label="Cantidad Anotaciones"
+            >
+
+          </div>
+
+        </div>
+
+        <!-- ================================= -->
+        <!-- TOTAL DE LEYENDA -->
+        <!-- ================================= -->
+
+        <div class="checkbox-row">
+
+          <input
+            id="legendShowTotal"
+            type="checkbox"
+            checked
+          >
+
+          <label for="legendShowTotal">
+            Mostrar total de elementos
+          </label>
+
+        </div>
+
+        <div class="field">
+
+          <label for="legendTotalText">
+            Texto del total
+          </label>
+
+          <input
+            id="legendTotalText"
+            type="text"
+            value="TOTAL DE ELEMENTOS"
+            maxlength="100"
+          >
+
+        </div>
+
+        <div class="field">
+
+          <label for="legendTotalNumber">
+            Número total manual (opcional)
+          </label>
+
+          <input
+            id="legendTotalNumber"
+            type="number"
+            min="0"
+            step="1"
+            placeholder="Total automático"
+          >
+
+        </div>
+
+        <p class="hint">
+          El total puede calcularse automáticamente
+          o establecerse manualmente.
+          Los cambios en la leyenda se guardarán.
+        </p>
+
+      </section>
+
+      <!-- ================================= -->
+      <!-- EXPORTACIÓN PNG -->
+      <!-- ================================= -->
+
+      <section class="section">
+
+        <h3>
+          EXPORTAR IMAGEN PNG
+        </h3>
+
+        <!-- FORMATO -->
+
+        <div class="field">
+
+          <label for="exportFormat">
+            Formato de imagen
+          </label>
+
+          <select id="exportFormat">
+
+            <option
+              value="16:9"
+              selected
+            >
+              Horizontal 16:9
+            </option>
+
+            <option value="4:3">
+              Horizontal 4:3
+            </option>
+
+            <option value="a4">
+              A4 horizontal
+            </option>
+
+            <option value="1:1">
+              Cuadrado 1:1
+            </option>
+
+          </select>
+
+        </div>
+
+        <!-- RESOLUCIÓN -->
+
+        <div class="field">
+
+          <label for="pngQuality">
+            Resolución
+          </label>
+
+          <select id="pngQuality">
+
+            <option value="1920">
+              Full HD — 1920 px
+            </option>
+
+            <option
+              value="2560"
+              selected
+            >
+              2K — 2560 px
+            </option>
+
+            <option value="3840">
+              4K — 3840 px
+            </option>
+
+          </select>
+
+        </div>
+
+        <!-- CENTRADO AUTOMÁTICO -->
+
+        <div class="checkbox-row">
+
+          <input
+            id="exportAutoFit"
+            type="checkbox"
+            checked
+          >
+
+          <label for="exportAutoFit">
+            Centrar automáticamente el recorrido
+            y los elementos
+          </label>
+
+        </div>
+
+        <!-- MARGEN -->
+
+        <div class="field">
+
+          <label for="exportMargin">
+            Margen de seguridad:
+            <span
+              id="exportMarginValue"
+              class="size-indicator"
+            >5</span>
+            %
+          </label>
+
+          <input
+            id="exportMargin"
+            type="range"
+            min="5"
+            max="30"
+            step="1"
+            value="5"
+          >
+
+        </div>
+
+        <!-- TAMAÑO DE TEXTO -->
+
+        <div class="field">
+
+          <label for="streetFont">
+            Tamaño de nombres de calles y avenidas
+          </label>
+
+          <input
+            id="streetFont"
+            type="range"
+            min="13"
+            max="32"
+            step="1"
+            value="19"
+          >
+
+        </div>
+
+        <!-- ENCABEZADO -->
+
+        <div class="checkbox-row">
+
+          <input
+            id="exportShowHeader"
+            type="checkbox"
+            checked
+          >
+
+          <label for="exportShowHeader">
+            Incluir encabezado institucional
+          </label>
+
+        </div>
+
+        <!-- PIE -->
+
+        <div class="checkbox-row">
+
+          <input
+            id="exportShowFooter"
+            type="checkbox"
+            checked
+          >
+
+          <label for="exportShowFooter">
+            Incluir distancia y pie de página
+          </label>
+
+        </div>
+
+        <!-- LEYENDA -->
+
+        <div class="checkbox-row">
+
+          <input
+            id="exportShowLegend"
+            type="checkbox"
+            checked
+          >
+
+          <label for="exportShowLegend">
+            Incluir leyenda editable en PNG
+          </label>
+
+        </div>
+
+        <!-- EXPORTAR -->
+
+        <button
+          id="btnPNG"
+          class="png"
+          type="button"
+        >
+          EXPORTAR MAPA EN PNG
+        </button>
+
+        <p class="hint">
+          La imagen exportada incluirá las rutas,
+          flechas, imágenes municipales, nombres
+          de vías y leyenda personalizada con
+          sus cantidades.
+        </p>
+
+      </section>
+
+      <!-- ================================= -->
+      <!-- ESTADO -->
+      <!-- ================================= -->
+
+      <div
+        id="status"
+        class="status"
+        role="status"
+        aria-live="polite"
+      >
+        Mapa listo para editar.
+      </div>
+
+    </main>
+
+  </aside>
+
+  <!-- ================================= -->
+  <!-- LEAFLET JAVASCRIPT -->
+  <!-- ================================= -->
+
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  ></script>
+
+  <!-- JAVASCRIPT DEL SISTEMA -->
+
+  <script src="./index.js"></script>
+
+</body>
+</html>
